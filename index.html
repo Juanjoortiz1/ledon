@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cotizador de Carteles Ledón</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@700&family=Courgette&family=Dancing+Script:wght@700&family=Inter:wght@400;500;600&family=Kaushan+Script&family=Lobster&family=Pacifico&family=Quicksand:wght@700&family=Righteous&family=Sacramento&family=Satisfy&family=Space+Grotesk:wght@500;600;700&family=Yellowtail&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Caveat:wght@700&amp;family=Courgette&amp;family=Dancing+Script:wght@700&amp;family=Inter:wght@400;500;600&amp;family=Kaushan+Script&amp;family=Lobster&amp;family=Pacifico&amp;family=Quicksand:wght@700&amp;family=Righteous&amp;family=Sacramento&amp;family=Satisfy&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Yellowtail&amp;display=swap">
 <style>
 /* Layout: la pared de neón (vista previa) manda arriba a la derecha; los pasos van a la izquierda; en el celular todo en una columna. */
 :root{
@@ -127,7 +126,7 @@ input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
           <textarea id="texto" maxlength="60" aria-label="Texto del cartel" rows="2">Lucía</textarea>
           <p class="hint">Hasta 3 renglones. Escribí como quieras que se lea, con mayúsculas y tildes.</p>
         </div>
-        <div id="panDibujo" hidden>
+        <div id="panDibujo" hidden="">
           <label class="drop" id="drop" for="archivo">
             <strong>Subí tu dibujo o logo</strong>
             <small>JPG o PNG. Mientras más limpio y de fondo liso, mejor.</small>
@@ -172,11 +171,11 @@ input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
 
     <aside class="side" aria-live="polite">
       <div class="wall" id="pared">
-        <label class="toggle"><input type="checkbox" id="encendido" checked> Encendido</label>
+        <label class="toggle"><input type="checkbox" id="encendido" checked=""> Encendido</label>
         <canvas id="vista" width="10" height="10"></canvas>
         <div class="vacio" id="vacio">Escribí un texto para ver tu cartel.</div>
       </div>
-      <div id="aviso" class="aviso" hidden></div>
+      <div id="aviso" class="aviso" hidden=""></div>
       <div class="price">
         <div class="tile main"><div class="k">Precio estimado</div><div class="v" id="precio">—</div><div class="s" id="precioSub">&nbsp;</div></div>
         <div class="tile"><div class="k">Para reservar</div><div class="v" id="senia">—</div><div class="s">Seña del 50%</div></div>
@@ -187,16 +186,16 @@ input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
         <li>Entrega<b id="fPlazo">—</b></li>
       </ul>
       <div class="actions">
-        <a class="btn primary" id="bWsp" href="#" target="_blank" rel="noopener" hidden>Pedir por WhatsApp</a>
-        <button class="btn primary" id="bCopiar" disabled>Copiar mi pedido</button>
+        <a class="btn primary" id="bWsp" href="#" target="_blank" rel="noopener" hidden="">Pedir por WhatsApp</a>
+        <button class="btn primary" id="bCopiar" disabled="">Copiar mi pedido</button>
       </div>
-      <textarea id="pedidoTxt" hidden readonly aria-label="Resumen del pedido"></textarea>
+      <textarea id="pedidoTxt" hidden="" readonly="" aria-label="Resumen del pedido"></textarea>
       <p class="nota" id="notaCopiar">Copiá el pedido y mandalo por mensaje para confirmar el diseño y reservar con la seña.</p>
       <p class="nota">Precio estimado en pesos argentinos. Incluye fuente de alimentación, cables y soporte. Lo confirmamos junto con el diseño final.</p>
     </aside>
   </div>
 </div>
-<section class="wrap" id="panelAdmin" hidden style="margin-top:28px">
+<section class="wrap" id="panelAdmin" hidden="" style="margin-top:28px">
   <div class="card">
     <h2>Panel del dueño</h2>
     <div id="adminClave">
@@ -204,7 +203,7 @@ input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
       <div class="row" style="margin-top:8px"><input type="password" id="claveIn" aria-label="Clave" autocomplete="off" style="max-width:240px"><button class="btn" id="claveBtn" type="button">Entrar</button></div>
       <p class="hint" id="claveMsg" style="margin-top:6px">&nbsp;</p>
     </div>
-    <div id="adminForm" hidden>
+    <div id="adminForm" hidden="">
       <p class="hint">Cambiá los valores y tocá "Guardar y probar". Los cambios se ven acá al instante. Para que tus clientes vean los nuevos precios, descargá la página actualizada y subila en lugar de la anterior.</p>
       <div id="cfgCampos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px"></div>
       <h2 style="margin-top:6px">Fuente de alimentación según metros de neón</h2>
@@ -223,8 +222,8 @@ input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
 </section>
 <div class="barra" id="barra">
   <div class="p"><small>Precio estimado</small><b id="barPrecio">—</b></div>
-  <a class="btn primary" id="barWsp" href="#" target="_blank" rel="noopener" hidden>Pedir por WhatsApp</a>
-  <button class="btn primary" id="barCopiar" type="button" disabled>Copiar mi pedido</button>
+  <a class="btn primary" id="barWsp" href="#" target="_blank" rel="noopener" hidden="">Pedir por WhatsApp</a>
+  <button class="btn primary" id="barCopiar" type="button" disabled="">Copiar mi pedido</button>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -778,20 +777,45 @@ if (typeof module !== 'undefined') module.exports = NeonCore;
      en un nombre de 6 a 8 letras. Ajustá "divisorMargen" o "manoObraBase" hasta que coincida con tus precios. */
   const PRISTINE = document.documentElement.outerHTML;   // copia de la página tal cual llegó (para "Descargar mi página")
   /*CFG-INICIO*/const CONFIG_BASE = {
-    WHATSAPP: '',
-    CLAVE: 'ledon',
-    precioNeonM: 3100, extraNeon: 0.1,
-    gramosPorMetro: 125, precioFilamentoG: 20,
-    horasPorMetro: 3, costoHoraMaquina: 260,
-    fuentes: [ {hastaM: 3, costo: 6500}, {hastaM: 7, costo: 9500}, {hastaM: 14, costo: 16500} ],
-    cableMetros: 2, precioCableM: 850, insumosFijos: 2500,
-    manoObraBase: 4000, manoObraPorMetro: 2000,
-    divisorMargen: 0.5,
-    precioMinimo: 45000, redondeo: 500, senia: 0.5,
-    plazo: '5 a 7 días hábiles',
-    anchoMin: 30, anchoMax: 150, anchoInicial: 65,
-    espesorMm: 6, minLargoCm: 2.5, radioMinCm: 1.5
-  };/*CFG-FIN*/
+  "WHATSAPP": "3513090529",
+  "CLAVE": "ledon",
+  "precioNeonM": 3100,
+  "extraNeon": 0.1,
+  "gramosPorMetro": 125,
+  "precioFilamentoG": 20,
+  "horasPorMetro": 3,
+  "costoHoraMaquina": 260,
+  "fuentes": [
+    {
+      "hastaM": 3,
+      "costo": 6500
+    },
+    {
+      "hastaM": 7,
+      "costo": 9500
+    },
+    {
+      "hastaM": 14,
+      "costo": 16500
+    }
+  ],
+  "cableMetros": 2,
+  "precioCableM": 850,
+  "insumosFijos": 2500,
+  "manoObraBase": 4000,
+  "manoObraPorMetro": 2000,
+  "divisorMargen": 0.5,
+  "precioMinimo": 45000,
+  "redondeo": 500,
+  "senia": 0.5,
+  "plazo": "5 a 7 días hábiles",
+  "anchoMin": 30,
+  "anchoMax": 150,
+  "anchoInicial": 65,
+  "espesorMm": 6,
+  "minLargoCm": 2.5,
+  "radioMinCm": 1.5
+};/*CFG-FIN*/
   const SIG = JSON.stringify(CONFIG_BASE);
   let CONFIG = JSON.parse(SIG);
   try { const g = JSON.parse(localStorage.getItem('ledon.cfg') || 'null'); if (g && g.sig === SIG) CONFIG = Object.assign(CONFIG, g.cfg); } catch (_) {}
@@ -1077,7 +1101,4 @@ if (typeof module !== 'undefined') module.exports = NeonCore;
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(medir);
   window.addEventListener('resize', () => { if (estado.res && !estado.res.error) dibujarNeon(); });
 })();
-</script>
-
-</body>
-</html>
+</script></body></html>
