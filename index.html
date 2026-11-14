@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cotizador de Carteles Ledón</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@700&family=Courgette&family=Dancing+Script:wght@700&family=Inter:wght@400;500;600&family=Kaushan+Script&family=Lobster&family=Pacifico&family=Quicksand:wght@700&family=Righteous&family=Sacramento&family=Satisfy&family=Space+Grotesk:wght@500;600;700&family=Yellowtail&display=swap">
+<style>
+/* Layout: la pared de neón (vista previa) manda arriba a la derecha; los pasos van a la izquierda; en el celular todo en una columna. */
+:root{
+  --bg:#f1f0ee; --surface:#ffffff; --surface2:#f6f5f3; --line:#dcd9d4;
+  --ink:#1b1a19; --muted:#6a6660; --accent:#d6246e; --accent-ink:#ffffff;
+  --wall:#0d0b10; --wall2:#1a1320;
+  --font-display:'Space Grotesk','Segoe UI',system-ui,sans-serif;
+  --font-body:'Inter','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121014; --surface:#1b181f; --surface2:#242029; --line:#352f3c;
+  --ink:#f2eff4; --muted:#a39dac; --accent:#ff4d97; --accent-ink:#1a0610; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121014; --surface:#1b181f; --surface2:#242029; --line:#352f3c;
+  --ink:#f2eff4; --muted:#a39dac; --accent:#ff4d97; --accent-ink:#1a0610; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--font-body);
+  padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1140px;margin:0 auto}
+header{margin-bottom:20px}
+h1{font:700 30px/1.1 var(--font-display);margin:0 0 6px;letter-spacing:-.01em;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:60ch}
+.grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:20px;align-items:start}
+}
+.steps{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+h2{font:600 12px/1 var(--font-body);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0}
+h2 b{color:var(--accent);margin-right:6px}
+.tabs{display:flex;gap:6px}
+.tab{flex:1;font:inherit;font-weight:600;padding:9px;border-radius:7px;border:1px solid var(--line);background:var(--surface2);color:var(--muted);cursor:pointer}
+.tab[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+textarea,input[type=number],input[type=text],select{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:10px 12px;min-width:0}
+textarea{resize:vertical;min-height:64px;font-size:18px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hint{color:var(--muted);font-size:13px;margin:0}
+.fonts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.font{font:inherit;text-align:center;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:8px;padding:8px 6px;cursor:pointer;min-width:0;overflow:hidden}
+.font .t{display:block;font-size:26px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.font .n{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.font[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.colors{display:flex;flex-wrap:wrap;gap:10px}
+.sw{width:36px;height:36px;border-radius:50%;border:2px solid var(--surface);outline:1.5px solid var(--line);cursor:pointer;padding:0}
+.sw[aria-pressed=true]{outline:2.5px solid var(--ink)}
+.row{display:flex;gap:10px;align-items:center}
+.row>input[type=number]{max-width:110px}
+input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+.drop{border:1.5px dashed var(--line);border-radius:9px;padding:18px;text-align:center;background:var(--surface2);cursor:pointer;display:block}
+.drop:hover,.drop.over{border-color:var(--accent)}
+.drop strong{display:block;font-family:var(--font-display);font-size:16px}
+.drop small{color:var(--muted)}
+.drop input{display:none}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0;position:sticky;top:12px}
+
+.wall{background:radial-gradient(120% 90% at 50% 40%,var(--wall2),var(--wall));border-radius:12px;min-height:260px;display:grid;place-items:center;padding:22px;position:relative;overflow:hidden}
+.wall canvas{max-width:100%;height:auto;display:block}
+.wall .vacio{color:#8d8498;text-align:center;padding:30px}
+.toggle{position:absolute;right:12px;top:10px;font-size:12px;color:#c7bfd0;display:flex;gap:6px;align-items:center;cursor:pointer}
+.toggle input{accent-color:var(--accent)}
+.price{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:520px){.price{grid-template-columns:minmax(0,1fr)}}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.tile.main{border-color:var(--accent)}
+.k{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+.v{font:700 32px/1.05 var(--font-display);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tile.main .v{color:var(--accent)}
+.s{font-size:13px;color:var(--muted);margin-top:4px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none}
+@media (max-width:520px){.facts{grid-template-columns:minmax(0,1fr)}}
+.facts li{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--muted)}
+.facts b{display:block;color:var(--ink);font-size:15px;font-variant-numeric:tabular-nums}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{font:inherit;font-weight:600;border-radius:8px;padding:12px 18px;cursor:pointer;border:1px solid var(--line);background:var(--surface2);color:var(--ink);text-decoration:none;display:inline-block}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.aviso{background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px}
+.nota{font-size:12px;color:var(--muted);margin:0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+#pedidoTxt{height:110px;font-size:13px}
+.barra{display:none;position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);align-items:center;gap:12px;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-shadow:0 -6px 18px rgba(0,0,0,.12)}
+.barra .p{flex:1;min-width:0}.barra .p small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.barra .p b{font:700 22px/1.1 var(--font-display);color:var(--accent);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:860px){
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .grid>.side{display:contents;position:static}
+  .side>*{order:2}
+  .steps{order:1}
+  .side>.wall{order:0;position:sticky;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:6;min-height:130px;padding:12px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .wall canvas{width:auto!important;height:auto!important;max-width:100%;max-height:calc(36vh - 30px)}
+  body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  .barra{display:flex}
+  .side>.actions{display:none}
+  .sw{width:42px;height:42px}
+  .btn,.tab{min-height:46px}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <h1>Armá tu cartel de neón</h1>
+    <p>Escribí tu palabra o frase, elegí la letra, el color y el tamaño. Ves cómo queda y cuánto cuesta al instante. Todos los carteles se hacen a medida en Córdoba.</p>
+  </header>
+
+  <div class="grid">
+    <div class="steps">
+      <section class="card">
+        <h2><b>1</b>Qué querés que diga</h2>
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" id="tabTexto" aria-selected="true">Texto</button>
+          <button class="tab" role="tab" id="tabDibujo" aria-selected="false">Mi dibujo o logo</button>
+        </div>
+        <div id="panTexto">
+          <textarea id="texto" maxlength="60" aria-label="Texto del cartel" rows="2">Lucía</textarea>
+          <p class="hint">Hasta 3 renglones. Escribí como quieras que se lea, con mayúsculas y tildes.</p>
+        </div>
+        <div id="panDibujo" hidden>
+          <label class="drop" id="drop" for="archivo">
+            <strong>Subí tu dibujo o logo</strong>
+            <small>JPG o PNG. Mientras más limpio y de fondo liso, mejor.</small>
+            <input type="file" id="archivo" accept="image/*">
+          </label>
+          <p class="hint" id="nombreArchivo" style="margin-top:8px">Todavía no subiste ninguna imagen.</p>
+          <label class="hint" for="modo" style="display:block;margin-top:10px">Tu dibujo es:</label>
+          <select id="modo" style="margin-top:4px">
+            <option value="linea">Letras o líneas finas (el neón sigue el trazo)</option>
+            <option value="contorno">Una figura rellena (el neón sigue el borde)</option>
+            <option value="huecos">Figura rellena con agujeros que también llevan neón</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="card" id="cardFuente">
+        <h2><b>2</b>Elegí la letra</h2>
+        <div class="fonts" id="fonts"></div>
+      </section>
+
+      <section class="card">
+        <h2><b id="nColor">3</b>Color del neón</h2>
+        <div class="colors" id="colors"></div>
+        <p class="hint" id="colorNombre">&nbsp;</p>
+      </section>
+
+      <section class="card">
+        <h2><b id="nTam">4</b>Tamaño</h2>
+        <div class="row">
+          <input type="range" id="anchoR" aria-label="Ancho en centímetros">
+          <input type="number" id="ancho" aria-label="Ancho en centímetros"><span>cm</span>
+        </div>
+        <p class="hint">Es el ancho total del cartel. El alto se calcula solo.</p>
+      </section>
+
+      <section class="card">
+        <h2><b id="nDatos">5</b>Tus datos <span style="text-transform:none;letter-spacing:0;font-weight:400">(opcional)</span></h2>
+        <input type="text" id="nombre" maxlength="40" placeholder="Tu nombre" aria-label="Tu nombre" autocomplete="given-name">
+        <textarea id="comentario" maxlength="200" rows="2" placeholder="¿Algo más? Ej.: para colgar en la pared, para un local, fecha del evento" aria-label="Comentarios" style="font-size:16px;min-height:56px"></textarea>
+      </section>
+    </div>
+
+    <aside class="side" aria-live="polite">
+      <div class="wall" id="pared">
+        <label class="toggle"><input type="checkbox" id="encendido" checked> Encendido</label>
+        <canvas id="vista" width="10" height="10"></canvas>
+        <div class="vacio" id="vacio">Escribí un texto para ver tu cartel.</div>
+      </div>
+      <div id="aviso" class="aviso" hidden></div>
+      <div class="price">
+        <div class="tile main"><div class="k">Precio estimado</div><div class="v" id="precio">—</div><div class="s" id="precioSub">&nbsp;</div></div>
+        <div class="tile"><div class="k">Para reservar</div><div class="v" id="senia">—</div><div class="s">Seña del 50%</div></div>
+      </div>
+      <ul class="facts">
+        <li>Tamaño<b id="fTam">—</b></li>
+        <li>Largo de neón<b id="fNeon">—</b></li>
+        <li>Entrega<b id="fPlazo">—</b></li>
+      </ul>
+      <div class="actions">
+        <a class="btn primary" id="bWsp" href="#" target="_blank" rel="noopener" hidden>Pedir por WhatsApp</a>
+        <button class="btn primary" id="bCopiar" disabled>Copiar mi pedido</button>
+      </div>
+      <textarea id="pedidoTxt" hidden readonly aria-label="Resumen del pedido"></textarea>
+      <p class="nota" id="notaCopiar">Copiá el pedido y mandalo por mensaje para confirmar el diseño y reservar con la seña.</p>
+      <p class="nota">Precio estimado en pesos argentinos. Incluye fuente de alimentación, cables y soporte. Lo confirmamos junto con el diseño final.</p>
+    </aside>
+  </div>
+</div>
+<section class="wrap" id="panelAdmin" hidden style="margin-top:28px">
+  <div class="card">
+    <h2>Panel del dueño</h2>
+    <div id="adminClave">
+      <p class="hint">Este panel es solo para vos. Ingresá tu clave para cambiar precios y costos.</p>
+      <div class="row" style="margin-top:8px"><input type="password" id="claveIn" aria-label="Clave" autocomplete="off" style="max-width:240px"><button class="btn" id="claveBtn" type="button">Entrar</button></div>
+      <p class="hint" id="claveMsg" style="margin-top:6px">&nbsp;</p>
+    </div>
+    <div id="adminForm" hidden>
+      <p class="hint">Cambiá los valores y tocá "Guardar y probar". Los cambios se ven acá al instante. Para que tus clientes vean los nuevos precios, descargá la página actualizada y subila en lugar de la anterior.</p>
+      <div id="cfgCampos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px"></div>
+      <h2 style="margin-top:6px">Fuente de alimentación según metros de neón</h2>
+      <div id="cfgFuentes" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px"></div>
+      <h2 style="margin-top:6px">Prueba de precios con el cartel que estás viendo</h2>
+      <p class="hint" id="cfgPrueba">Escribí un texto arriba para ver precios de prueba.</p>
+      <div class="row" style="flex-wrap:wrap"><label for="objetivo" class="hint">Quiero que este cartel cueste ($):</label><input type="number" id="objetivo" min="0" step="any" style="max-width:150px"><button class="btn" id="bAjustar" type="button">Ajustar el margen</button></div>
+      <div class="actions" style="margin-top:6px">
+        <button class="btn primary" id="bGuardarCfg" type="button">Guardar y probar</button>
+        <button class="btn" id="bBajar" type="button">Descargar mi página actualizada</button>
+        <button class="btn" id="bReset" type="button">Volver a los valores originales</button>
+      </div>
+      <p class="hint" id="cfgMsg">&nbsp;</p>
+    </div>
+  </div>
+</section>
+<div class="barra" id="barra">
+  <div class="p"><small>Precio estimado</small><b id="barPrecio">—</b></div>
+  <a class="btn primary" id="barWsp" href="#" target="_blank" rel="noopener" hidden>Pedir por WhatsApp</a>
+  <button class="btn primary" id="barCopiar" type="button" disabled>Copiar mi pedido</button>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* Núcleo de medición: sin IA, solo procesamiento de imagen clásico. */
+const NeonCore = (function () {
+  const VEC = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+
+  function blur3(g, w, h) {
+    const t = new Float32Array(w * h), o = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const a = g[y * w + Math.max(0, x - 1)], b = g[y * w + x], c = g[y * w + Math.min(w - 1, x + 1)];
+      t[y * w + x] = (a + 2 * b + c) / 4;
+    }
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const a = t[Math.max(0, y - 1) * w + x], b = t[y * w + x], c = t[Math.min(h - 1, y + 1) * w + x];
+      o[y * w + x] = Math.round((a + 2 * b + c) / 4);
+    }
+    return o;
+  }
+
+  function otsu(g) {
+    const hist = new Float64Array(256);
+    for (let i = 0; i < g.length; i++) hist[g[i]]++;
+    const total = g.length;
+    let sum = 0; for (let i = 0; i < 256; i++) sum += i * hist[i];
+    let sumB = 0, wB = 0, mejor = -1, t = 0;
+    for (let i = 0; i < 256; i++) {
+      wB += hist[i]; if (!wB) continue;
+      const wF = total - wB; if (!wF) break;
+      sumB += i * hist[i];
+      const mB = sumB / wB, mF = (sum - sumB) / wF;
+      const v = wB * wF * (mB - mF) * (mB - mF);
+      if (v > mejor) { mejor = v; t = i; }
+    }
+    return t;
+  }
+
+  function separarDibujo(gris, alfa, w, h, invertir, ruido) {
+    const n = w * h, tinta = new Uint8Array(n);
+    let conAlfa = false;
+    if (alfa) {
+      let c = 0; for (let i = 0; i < n; i++) if (alfa[i] < 250) c++;
+      conAlfa = c > 0.01 * n;
+    }
+    if (conAlfa) {
+      for (let i = 0; i < n; i++) tinta[i] = alfa[i] > 127 ? 1 : 0;
+    } else {
+      const s = blur3(gris, w, h), t = otsu(s);
+      let c = 0;
+      for (let i = 0; i < n; i++) { tinta[i] = s[i] > t ? 1 : 0; c += tinta[i]; }
+      if (c > n / 2) for (let i = 0; i < n; i++) tinta[i] ^= 1;
+    }
+    if (invertir) for (let i = 0; i < n; i++) tinta[i] ^= 1;
+    // borra motas sueltas (ruido de JPG) sin erosionar trazos finos
+    const visto = new Uint8Array(n), pila = new Int32Array(n);
+    for (let s = 0; s < n; s++) {
+      if (!tinta[s] || visto[s]) continue;
+      let sp = 0, cnt = 0; const miembros = [];
+      pila[sp++] = s; visto[s] = 1;
+      while (sp) {
+        const p = pila[--sp]; cnt++; miembros.push(p);
+        const y = (p / w) | 0, x = p - y * w;
+        for (const [dy, dx] of VEC) {
+          const yy = y + dy, xx = x + dx;
+          if (yy < 0 || yy >= h || xx < 0 || xx >= w) continue;
+          const q = yy * w + xx;
+          if (tinta[q] && !visto[q]) { visto[q] = 1; pila[sp++] = q; }
+        }
+      }
+      if (cnt < ruido) for (const p of miembros) tinta[p] = 0;
+    }
+    return tinta;
+  }
+
+  // Zhang-Suen: afina el dibujo hasta una línea central de 1 px. Coordenadas con borde de 1 px.
+  function esqueleto(tinta, w, h) {
+    const S = w + 2, img = new Uint8Array((h + 2) * S);
+    let lista = [];
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (tinta[y * w + x]) {
+      const i = (y + 1) * S + x + 1; img[i] = 1; lista.push(i);
+    }
+    const o = [-S, -S + 1, 1, S + 1, S, S - 1, -1, -S - 1];
+    let cambio = true;
+    while (cambio) {
+      cambio = false;
+      for (let paso = 0; paso < 2; paso++) {
+        const borrar = [];
+        for (let k = 0; k < lista.length; k++) {
+          const i = lista[k];
+          const p2 = img[i + o[0]], p3 = img[i + o[1]], p4 = img[i + o[2]], p5 = img[i + o[3]],
+            p6 = img[i + o[4]], p7 = img[i + o[5]], p8 = img[i + o[6]], p9 = img[i + o[7]];
+          const B = p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
+          if (B < 2 || B > 6) continue;
+          const A = (!p2 && p3) + (!p3 && p4) + (!p4 && p5) + (!p5 && p6) + (!p6 && p7) + (!p7 && p8) + (!p8 && p9) + (!p9 && p2);
+          if (A !== 1) continue;
+          if (paso === 0) { if (p2 * p4 * p6 || p4 * p6 * p8) continue; }
+          else { if (p2 * p4 * p8 || p2 * p6 * p8) continue; }
+          borrar.push(i);
+        }
+        if (borrar.length) {
+          cambio = true;
+          for (const i of borrar) img[i] = 0;
+          lista = lista.filter(i => img[i]);
+        }
+      }
+    }
+    return { pix: new Set(lista), S, M: (h + 2) * S };
+  }
+
+  // Rellena todo lo que no es fondo (huecos y espacios entre líneas dobles): queda la silueta llena.
+  function rellenar(tinta, w, h) {
+    const S = w + 2, n = (h + 2) * S, fondo = new Uint8Array(n);
+    const libre = i => { const y = (i / S) | 0, x = i - y * S; return y === 0 || x === 0 || y === h + 1 || x === S - 1 || !tinta[(y - 1) * w + x - 1]; };
+    const pila = [0]; fondo[0] = 1;
+    while (pila.length) {
+      const p = pila.pop();
+      for (const q of [p - 1, p + 1, p - S, p + S]) {
+        if (q < 0 || q >= n || fondo[q]) continue;
+        const y = (q / S) | 0, x = q - y * S; if (x < 0 || x >= S) continue;
+        if (libre(q)) { fondo[q] = 1; pila.push(q); }
+      }
+    }
+    const out = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) out[y * w + x] = fondo[(y + 1) * S + x + 1] ? 0 : 1;
+    return out;
+  }
+
+  // Borde de la silueta: píxeles llenos que tocan el fondo.
+  function contorno(tinta, w, h) {
+    const S = w + 2, pix = new Set();
+    const lleno = (x, y) => x >= 0 && y >= 0 && x < w && y < h && tinta[y * w + x];
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (tinta[y * w + x]) {
+      if (!lleno(x - 1, y) || !lleno(x + 1, y) || !lleno(x, y - 1) || !lleno(x, y + 1)) pix.add((y + 1) * S + x + 1);
+    }
+    return { pix, S, M: (h + 2) * S };
+  }
+
+  function distancia(tinta, w, h) {
+    const S = w + 2, n = (h + 2) * S, d = new Float32Array(n), R2 = Math.SQRT2;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (tinta[y * w + x]) d[(y + 1) * S + x + 1] = 1e9;
+    for (let y = 1; y <= h; y++) for (let x = 1; x <= w; x++) {
+      const i = y * S + x; if (d[i] === 0) continue;
+      d[i] = Math.min(d[i], d[i - 1] + 1, d[i - S] + 1, d[i - S - 1] + R2, d[i - S + 1] + R2);
+    }
+    for (let y = h; y >= 1; y--) for (let x = w; x >= 1; x--) {
+      const i = y * S + x; if (d[i] === 0) continue;
+      d[i] = Math.min(d[i], d[i + 1] + 1, d[i + S] + 1, d[i + S + 1] + R2, d[i + S - 1] + R2);
+    }
+    return d;
+  }
+
+  // Deja el esqueleto en su mínima expresión: saca los píxeles que sobran sin cortar nada
+  // (esquinas de escalera, bloques de 2x2). No toca las puntas ni los lazos.
+  function quitarEsquinas(pix, S) {
+    const offs = VEC.map(([dy, dx]) => dy * S + dx);
+    for (let vuelta = 0; vuelta < 4; vuelta++) {
+      let cambio = false;
+      const orden = Array.from(pix).sort((a, b) => a - b);
+      for (const p of orden) {
+        if (!pix.has(p)) continue;
+        const n = []; for (let k = 0; k < 8; k++) if (pix.has(p + offs[k])) n.push(k);
+        if (n.length < 2) continue;
+        const padre = n.map((_, i) => i);
+        const raiz = i => { while (padre[i] !== i) i = padre[i] = padre[padre[i]]; return i; };
+        for (let i = 0; i < n.length; i++) for (let j = i + 1; j < n.length; j++) {
+          const [ya, xa] = VEC[n[i]], [yb, xb] = VEC[n[j]];
+          if (Math.max(Math.abs(ya - yb), Math.abs(xa - xb)) <= 1) padre[raiz(i)] = raiz(j);
+        }
+        let comps = 0; for (let i = 0; i < n.length; i++) if (raiz(i) === i) comps++;
+        if (comps === 1) { pix.delete(p); cambio = true; }
+      }
+      if (!cambio) break;
+    }
+  }
+
+  function trazar(pix, S, M) {
+    const offs = VEC.map(([dy, dx]) => dy * S + dx);
+    const nb = new Map(), grado = new Map();
+    for (const p of pix) {
+      const a = []; for (const f of offs) if (pix.has(p + f)) a.push(p + f);
+      nb.set(p, a); grado.set(p, a.length);
+    }
+    const toXY = i => { const y = (i / S) | 0; return [i - y * S - 1, y - 1]; };
+    const grupo = new Map(), centro = [];
+    for (const p of pix) {
+      if (grado.get(p) < 3 || grupo.has(p)) continue;
+      const gid = centro.length, pila = [p], miembros = [p];
+      grupo.set(p, gid);
+      while (pila.length) {
+        const a = pila.pop();
+        for (const b of nb.get(a)) if (grado.get(b) >= 3 && !grupo.has(b)) { grupo.set(b, gid); pila.push(b); miembros.push(b); }
+      }
+      let sx = 0, sy = 0; for (const m of miembros) { const [x, y] = toXY(m); sx += x; sy += y; }
+      centro.push([sx / miembros.length, sy / miembros.length]);
+    }
+    const tipo = p => grado.get(p) === 1 ? 'punta' : 'cruce';
+    const tramos = [], hechos = new Set();
+    for (const p of pix) {
+      if (grado.get(p) === 2) continue;
+      for (const q of nb.get(p)) {
+        if (hechos.has(p * M + q)) continue;
+        if (grupo.has(p) && grupo.has(q) && grupo.get(p) === grupo.get(q)) continue;
+        const ruta = [p, q]; let prev = p, cur = q;
+        while (grado.get(cur) === 2) {
+          const nn = nb.get(cur), sig = nn[0] !== prev ? nn[0] : nn[1];
+          ruta.push(sig); prev = cur; cur = sig;
+        }
+        hechos.add(p * M + q); hechos.add(cur * M + ruta[ruta.length - 2]);
+        const xy = ruta.map(toXY);
+        if (grupo.has(p)) xy[0] = centro[grupo.get(p)].slice();
+        if (grupo.has(cur)) xy[xy.length - 1] = centro[grupo.get(cur)].slice();
+        tramos.push({ pix: ruta, xy, cerrado: false, ini: tipo(p), fin: tipo(cur) });
+      }
+    }
+    // lazos puros (una "O"): todos sus píxeles tienen grado 2
+    const usados = new Set(); for (const t of tramos) for (const q of t.pix) usados.add(q);
+    for (const p of Array.from(pix).filter(p => !usados.has(p)).sort((a, b) => a - b)) {
+      if (usados.has(p) || grado.get(p) !== 2) continue;
+      const ruta = [p, nb.get(p)[0]]; let prev = p, cur = nb.get(p)[0], completo = true;
+      for (;;) {
+        const cand = nb.get(cur).filter(n => n !== prev);
+        if (grado.get(cur) !== 2 || !cand.length) { completo = false; break; }
+        const sig = cand[0]; if (sig === p) break;
+        ruta.push(sig); prev = cur; cur = sig;
+      }
+      if (!completo) continue;
+      for (const q of ruta) usados.add(q);
+      tramos.push({ pix: ruta, xy: ruta.map(toXY), cerrado: true, ini: null, fin: null });
+    }
+    return tramos;
+  }
+
+  function largoCrudo(ruta, S) {
+    let s = 0;
+    for (let k = 1; k < ruta.length; k++) {
+      const ya = (ruta[k - 1] / S) | 0, xa = ruta[k - 1] - ya * S, yb = (ruta[k] / S) | 0, xb = ruta[k] - yb * S;
+      s += Math.hypot(xa - xb, ya - yb);
+    }
+    return s;
+  }
+
+  function podar(pix, S, M, largoMin) {
+    let cantidad = 0;
+    for (let it = 0; it < 8; it++) {
+      quitarEsquinas(pix, S);
+      const borrar = new Set(); let n = 0;
+      for (const t of trazar(pix, S, M)) {
+        const espolon = (t.ini === 'punta' && t.fin === 'cruce') || (t.ini === 'cruce' && t.fin === 'punta');
+        if (espolon && largoCrudo(t.pix, S) < largoMin) {
+          const r = t.ini === 'cruce' ? t.pix.slice(1) : t.pix.slice(0, -1);
+          for (const q of r) borrar.add(q); n++;
+        }
+      }
+      if (!borrar.size) break;
+      for (const q of borrar) pix.delete(q);
+      cantidad += n;
+    }
+    return cantidad;
+  }
+
+  function suavizar(xy, cerrado, ventana = 9) {
+    const n = xy.length, k = Math.min(ventana >> 1, (n - 1) >> 1);
+    if (k < 1) return xy;
+    const v = 2 * k + 1; let ext;
+    if (cerrado) ext = xy.slice(n - k).concat(xy, xy.slice(0, k));
+    else {
+      const pre = [], post = [];
+      for (let j = k; j >= 1; j--) pre.push([2 * xy[0][0] - xy[j][0], 2 * xy[0][1] - xy[j][1]]);
+      for (let j = n - 2; j >= n - k - 1; j--) post.push([2 * xy[n - 1][0] - xy[j][0], 2 * xy[n - 1][1] - xy[j][1]]);
+      ext = pre.concat(xy, post);
+    }
+    const s = [];
+    for (let i = 0; i + v <= ext.length; i++) {
+      let sx = 0, sy = 0; for (let j = 0; j < v; j++) { sx += ext[i + j][0]; sy += ext[i + j][1]; }
+      s.push([sx / v, sy / v]);
+    }
+    if (cerrado) s.push(s[0].slice());
+    return s;
+  }
+
+  function largoTramo(xy) {
+    let s = 0; for (let i = 1; i < xy.length; i++) s += Math.hypot(xy[i][0] - xy[i - 1][0], xy[i][1] - xy[i - 1][1]);
+    return s;
+  }
+
+  /* ---------- curvas Bézier (ajuste de Schneider) ---------- */
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1]], add = (a, b) => [a[0] + b[0], a[1] + b[1]], mul = (a, k) => [a[0] * k, a[1] * k];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1], norma = a => { const l = Math.hypot(a[0], a[1]) || 1; return [a[0] / l, a[1] / l]; };
+  function bez(b, t) {
+    const m = 1 - t, c0 = m * m * m, c1 = 3 * m * m * t, c2 = 3 * m * t * t, c3 = t * t * t;
+    return [c0 * b[0][0] + c1 * b[1][0] + c2 * b[2][0] + c3 * b[3][0], c0 * b[0][1] + c1 * b[1][1] + c2 * b[2][1] + c3 * b[3][1]];
+  }
+  function bez1(b, t) {
+    const m = 1 - t, c0 = 3 * m * m, c1 = 6 * m * t, c2 = 3 * t * t;
+    return [c0 * (b[1][0] - b[0][0]) + c1 * (b[2][0] - b[1][0]) + c2 * (b[3][0] - b[2][0]), c0 * (b[1][1] - b[0][1]) + c1 * (b[2][1] - b[1][1]) + c2 * (b[3][1] - b[2][1])];
+  }
+  function bez2(b, t) {
+    const m = 1 - t, c0 = 6 * m, c1 = 6 * t;
+    return [c0 * (b[2][0] - 2 * b[1][0] + b[0][0]) + c1 * (b[3][0] - 2 * b[2][0] + b[1][0]), c0 * (b[2][1] - 2 * b[1][1] + b[0][1]) + c1 * (b[3][1] - 2 * b[2][1] + b[1][1])];
+  }
+  function parametrizar(d) {
+    const u = [0]; for (let i = 1; i < d.length; i++) u.push(u[i - 1] + Math.hypot(d[i][0] - d[i - 1][0], d[i][1] - d[i - 1][1]));
+    const L = u[u.length - 1] || 1; return u.map(x => x / L);
+  }
+  function generar(d, u, t1, t2) {
+    const n = d.length, p0 = d[0], p3 = d[n - 1];
+    let c00 = 0, c01 = 0, c11 = 0, x0 = 0, x1 = 0;
+    for (let i = 0; i < n; i++) {
+      const t = u[i], m = 1 - t, b0 = m * m * m, b1 = 3 * m * m * t, b2 = 3 * m * t * t, b3 = t * t * t;
+      const A1 = mul(t1, b1), A2 = mul(t2, b2);
+      c00 += dot(A1, A1); c01 += dot(A1, A2); c11 += dot(A2, A2);
+      const tmp = sub(d[i], add(mul(p0, b0 + b1), mul(p3, b2 + b3)));
+      x0 += dot(A1, tmp); x1 += dot(A2, tmp);
+    }
+    const det = c00 * c11 - c01 * c01;
+    const al = det === 0 ? 0 : (x0 * c11 - x1 * c01) / det, ar = det === 0 ? 0 : (c00 * x1 - c01 * x0) / det;
+    const seg = Math.hypot(p3[0] - p0[0], p3[1] - p0[1]), eps = 1e-6 * seg;
+    if (al < eps || ar < eps) { const k = seg / 3; return [p0, add(p0, mul(t1, k)), add(p3, mul(t2, k)), p3]; }
+    return [p0, add(p0, mul(t1, al)), add(p3, mul(t2, ar)), p3];
+  }
+  function reparam(d, u, b) {
+    return u.map((t, i) => {
+      const q = bez(b, t), q1 = bez1(b, t), q2 = bez2(b, t), df = sub(q, d[i]);
+      const num = dot(df, q1), den = dot(q1, q1) + dot(df, q2);
+      return den === 0 ? t : Math.min(1, Math.max(0, t - num / den));
+    });
+  }
+  function errorMax(d, b, u) {
+    let m = 0, k = Math.floor(d.length / 2);
+    for (let i = 1; i < d.length - 1; i++) { const q = bez(b, u[i]), e = (q[0] - d[i][0]) ** 2 + (q[1] - d[i][1]) ** 2; if (e >= m) { m = e; k = i; } }
+    return [m, k];
+  }
+  function ajustar(d, t1, t2, err) {
+    const n = d.length;
+    if (n === 2) { const k = Math.hypot(d[1][0] - d[0][0], d[1][1] - d[0][1]) / 3; return [[d[0], add(d[0], mul(t1, k)), add(d[1], mul(t2, k)), d[1]]]; }
+    let u = parametrizar(d), b = generar(d, u, t1, t2), [e, k] = errorMax(d, b, u);
+    if (e < err * err) return [b];
+    if (e < err * err * 16) for (let i = 0; i < 20; i++) {
+      u = reparam(d, u, b); b = generar(d, u, t1, t2); [e, k] = errorMax(d, b, u);
+      if (e < err * err) return [b];
+    }
+    k = Math.min(n - 2, Math.max(1, k));
+    const tc = norma(sub(d[k - 1], d[k + 1]));
+    return ajustar(d.slice(0, k + 1), t1, tc, err).concat(ajustar(d.slice(k), mul(tc, -1), t2, err));
+  }
+  function remuestrear(pts, paso) {
+    const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    const tot = L[L.length - 1], n = Math.max(2, Math.round(tot / paso) + 1), out = []; let j = 0;
+    for (let k = 0; k < n; k++) {
+      const sx = tot * k / (n - 1); while (j < L.length - 2 && L[j + 1] < sx) j++;
+      const dl = L[j + 1] - L[j], t = dl ? (sx - L[j]) / dl : 0;
+      out.push([pts[j][0] + (pts[j + 1][0] - pts[j][0]) * t, pts[j][1] + (pts[j + 1][1] - pts[j][1]) * t]);
+    }
+    return out;
+  }
+  function esquinas(p, k, umbral, cerrado) {
+    const n = p.length, ang = new Float64Array(n), at = i => p[((i % n) + n) % n];
+    const lo = cerrado ? 0 : k, hi = cerrado ? n : n - k;
+    for (let i = lo; i < hi; i++) {
+      const a = sub(at(i), at(i - k)), b = sub(at(i + k), at(i));
+      const la = Math.hypot(a[0], a[1]), lb = Math.hypot(b[0], b[1]); if (!la || !lb) continue;
+      ang[i] = Math.acos(Math.max(-1, Math.min(1, dot(a, b) / (la * lb)))) * 180 / Math.PI;
+    }
+    const idx = []; for (let i = lo; i < hi; i++) if (ang[i] > umbral) idx.push(i);
+    idx.sort((x, y) => ang[y] - ang[x]);
+    const sel = [];
+    for (const i of idx) if (sel.every(j => { const d = Math.abs(i - j); return Math.min(d, n - d) > k; })) sel.push(i);
+    return sel.sort((a, b) => a - b);
+  }
+  function ajustarTramo(t, paso, err, k, umbral) {
+    let p = remuestrear(t.suave, paso);
+    if (t.cerrado && p.length > 3) p = p.slice(0, -1);
+    const n = p.length;
+    if (n < 2) { t.bez = []; return; }
+    const tg = (a, b) => norma(sub(b, a));
+    let res = [];
+    if (!t.cerrado) {
+      const cortes = [0].concat(esquinas(p, Math.min(k, (n - 1) >> 1) || 1, umbral, false), [n - 1]);
+      for (let c = 0; c + 1 < cortes.length; c++) {
+        const sec = p.slice(cortes[c], cortes[c + 1] + 1), m = Math.min(3, sec.length - 1);
+        res = res.concat(ajustar(sec, tg(sec[0], sec[m]), tg(sec[sec.length - 1], sec[sec.length - 1 - m]), err));
+      }
+    } else {
+      let cs = esquinas(p, Math.min(k, n >> 2) || 1, umbral, true), cont = [];
+      const at = i => p[((i % n) + n) % n];
+      if (!cs.length) { cs = [0, n >> 1]; cont = [true, true]; } else cont = cs.map(() => false);
+      for (let c = 0; c < cs.length; c++) {
+        let i0 = cs[c], i1 = cs[(c + 1) % cs.length]; if (cs.length === 1) i1 = i0 + n; else if (i1 <= i0) i1 += n;
+        const sec = []; for (let i = i0; i <= i1; i++) sec.push(at(i));
+        const m = Math.min(3, sec.length - 1);
+        const t1 = cont[c] ? tg(at(i0 - 1), at(i0 + 1)) : tg(sec[0], sec[m]);
+        const t2 = cont[(c + 1) % cs.length] ? tg(at(i1 + 1), at(i1 - 1)) : tg(sec[sec.length - 1], sec[sec.length - 1 - m]);
+        res = res.concat(ajustar(sec, t1, t2, err));
+      }
+    }
+    t.bez = res;
+  }
+  function largoBez(segs) {
+    let s = 0;
+    for (const b of segs) { let prev = b[0]; for (let i = 1; i <= 16; i++) { const q = bez(b, i / 16); s += Math.hypot(q[0] - prev[0], q[1] - prev[1]); prev = q; } }
+    return s;
+  }
+  function recta(a, b) { return [a, [a[0] + (b[0] - a[0]) / 3, a[1] + (b[1] - a[1]) / 3], [a[0] + 2 * (b[0] - a[0]) / 3, a[1] + 2 * (b[1] - a[1]) / 3], b]; }
+
+  // Todo trazo o pieza de neón debe medir al menos minPx: las piezas sueltas muy cortas (puntitos) se reemplazan por
+  // una recta de ese largo y a las puntas libres cortas se les agrega el tramo que falta.
+  function alargar(tramos, minPx) {
+    const padre = new Map(), raiz = k => { while (padre.get(k) !== k) { padre.set(k, padre.get(padre.get(k))); k = padre.get(k); } return k; };
+    const clave = p => p[0].toFixed(2) + ',' + p[1].toFixed(2);
+    tramos.forEach((t, i) => {
+      const ks = t.cerrado ? ['c' + i] : [clave(t.xy[0]), clave(t.xy[t.xy.length - 1])];
+      ks.forEach(k => { if (!padre.has(k)) padre.set(k, k); });
+      if (ks.length > 1) padre.set(raiz(ks[0]), raiz(ks[1]));
+      t._k = ks[0];
+    });
+    const piezas = new Map();
+    tramos.forEach(t => { const r = raiz(t._k); if (!piezas.has(r)) piezas.set(r, []); piezas.get(r).push(t); });
+    let alargadas = 0, extra = 0; const quitar = new Set(), nuevos = [];
+    for (const ts of piezas.values()) {
+      const L = ts.reduce((s, t) => s + t.largo, 0);
+      if (L >= minPx - 1e-6) continue;
+      let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+      for (const t of ts) for (const [x, y] of t.suave) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, vert = (y1 - y0) > (x1 - x0) * 1.2, h = minPx / 2;
+      const a = vert ? [cx, cy - h] : [cx - h, cy], b = vert ? [cx, cy + h] : [cx + h, cy];
+      ts.forEach(t => quitar.add(t));
+      nuevos.push({ bez: [recta(a, b)], largo: minPx, suave: [a, b], xy: [a, b], cerrado: false, ini: 'punta', fin: 'punta', alargada: true });
+      alargadas++; extra += minPx - L;
+    }
+    const resto = tramos.filter(t => !quitar.has(t));
+    for (const t of resto) {   // puntas libres cortas
+      if (t.cerrado || !t.bez.length || t.largo >= minPx - 1e-6) continue;
+      if ((t.ini === 'punta') === (t.fin === 'punta')) continue;
+      const falta = minPx - t.largo;
+      if (t.ini === 'punta') { const P = t.bez[0][0], d = norma(sub(P, t.bez[0][1])), Q = add(P, mul(d, falta)); t.bez.unshift(recta(Q, P)); t.suave = [Q].concat(t.suave); }
+      else { const e = t.bez[t.bez.length - 1], P = e[3], d = norma(sub(P, e[2])), Q = add(P, mul(d, falta)); t.bez.push(recta(P, Q)); t.suave = t.suave.concat([Q]); }
+      t.largo = minPx; t.alargada = true; alargadas++; extra += falta;
+    }
+    return { tramos: resto.concat(nuevos), alargadas, extra };
+  }
+
+  // Curvas más cerradas que el radio mínimo (el neón no dobla ahí). Devuelve los puntos donde pasa.
+  function curvasCerradas(tramos, pasoPx, radioPx) {
+    const zonas = [], m = 4;
+    for (const t of tramos) {
+      const pts = []; for (const b of t.bez) { const n = Math.max(2, Math.ceil(largoBez([b]) / pasoPx)); for (let i = (pts.length ? 1 : 0); i <= n; i++) pts.push(bez(b, i / n)); }
+      const n = pts.length; if (n < 2 * m + 1) continue;
+      let racha = [];
+      const cierra = () => { if (racha.length) { zonas.push(racha[racha.length >> 1]); racha = []; } };
+      for (let i = m; i < n - m; i++) {
+        const a = pts[i - m], b = pts[i], c = pts[i + m];
+        const ab = Math.hypot(b[0] - a[0], b[1] - a[1]), bc = Math.hypot(c[0] - b[0], c[1] - b[1]), ca = Math.hypot(a[0] - c[0], a[1] - c[1]);
+        const area = Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2;
+        const R = area ? ab * bc * ca / (4 * area) : Infinity;
+        if (R < radioPx) racha.push(b); else cierra();
+      }
+      cierra();
+    }
+    return zonas;
+  }
+
+  function analizar(gris, alfa, w, h, o) {
+    let tinta = separarDibujo(gris, alfa, w, h, !!o.invertir, o.ruido == null ? 20 : o.ruido);
+    const modoContorno = o.modo === 'contorno' || o.modo === 'huecos';
+    if (o.modo === 'contorno') tinta = rellenar(tinta, w, h);   // 'huecos' no rellena: sigue también los bordes interiores
+    let x0 = w, x1 = -1, y0 = h, y1 = -1;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (tinta[y * w + x]) {
+      if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+    }
+    if (x1 < 0) return { error: 'vacio' };
+    const bw = x1 - x0 + 1, bh = y1 - y0 + 1;
+    let mmPx = null;
+    if (o.anchoCm > 0) mmPx = o.anchoCm * 10 / bw; else if (o.altoCm > 0) mmPx = o.altoCm * 10 / bh;
+
+    const { pix, S, M } = modoContorno ? contorno(tinta, w, h) : esqueleto(tinta, w, h);
+    let grosor = 0, podadas = 0;
+    if (modoContorno) quitarEsquinas(pix, S);
+    else {
+      const dist = distancia(tinta, w, h);
+      let sd = 0; for (const p of pix) sd += dist[p];
+      grosor = pix.size ? 2 * sd / pix.size : 0;
+      const poda = o.poda == null ? 1 : o.poda;
+      podadas = poda > 0 ? podar(pix, S, M, poda * grosor) : (quitarEsquinas(pix, S), 0);
+    }
+    let tramos = trazar(pix, S, M);
+    // píxeles sueltos (puntitos): se miden como piezas de largo cero y después se alargan al mínimo
+    const usados = new Set(); for (const t of tramos) for (const q of t.pix) usados.add(q);
+    for (const p of pix) if (!usados.has(p)) { const y = (p / S) | 0, xy = [p - y * S - 1, y - 1]; tramos.push({ pix: [p], xy: [xy], cerrado: false, ini: 'punta', fin: 'punta', punto: true }); }
+
+    const mm = mmPx || 0, espesorMm = o.espesorMm || 6, minMm = o.minLargoMm == null ? 25 : o.minLargoMm, radioMm = o.radioMinMm == null ? 15 : o.radioMinMm;
+    const paso = mm ? Math.min(6, Math.max(1.2, 1 / mm)) : 2, err = mm ? Math.max(0.8, 0.5 / mm) : 1.2;
+    const k = Math.max(2, Math.round(2.5 / (paso * (mm || 1))));
+    for (const t of tramos) {
+      t.suave = t.xy.length > 1 ? suavizar(t.xy, t.cerrado) : t.xy;
+      if (t.xy.length < 2) { t.bez = []; t.largo = 0; continue; }
+      ajustarTramo(t, paso, err, k, o.anguloEsquina || 55);
+      t.largo = largoBez(t.bez);
+    }
+    let base = 0; for (const t of tramos) base += t.largo;
+    let alargadas = 0, extra = 0;
+    if (mm && minMm > 0) { const r = alargar(tramos, minMm / mm); tramos = r.tramos; alargadas = r.alargadas; extra = r.extra; }
+    tramos = tramos.filter(t => t.bez.length);
+    const largoPx = tramos.reduce((s, t) => s + t.largo, 0);
+    const cerradas = mm && radioMm > 0 ? curvasCerradas(tramos, Math.max(1, 1 / mm), radioMm / mm) : [];
+
+    const offs = VEC.map(([dy, dx]) => dy * S + dx), vis = new Set(); let piezas = 0;
+    for (const p of pix) {
+      if (vis.has(p)) continue; piezas++;
+      const pila = [p]; vis.add(p);
+      while (pila.length) { const a = pila.pop(); for (const f of offs) { const q = a + f; if (pix.has(q) && !vis.has(q)) { vis.add(q); pila.push(q); } } }
+    }
+    let puntas = 0; for (const t of tramos) for (const e of [t.ini, t.fin]) if (e === 'punta') puntas++;
+    let nodos = 0; for (const t of tramos) nodos += t.bez.length + 1;
+    return { tramos, bbox: { x: x0, y: y0, w: bw, h: bh }, mmPx, largoPx, largoBasePx: base, extraPx: extra, alargadas, cerradas,
+      espesorPx: mm ? espesorMm / mm : 0, nodos, podadas, piezas, puntas, grosor, w, h };
+  }
+
+  function construirSVG(res, espesorMm) {
+    const s = res.mmPx, b = res.bbox, ancho = b.w * s, alto = b.h * s, esp = espesorMm || 6;
+    const f = ([x, y]) => ((x - b.x) * s).toFixed(2) + ' ' + ((y - b.y) * s).toFixed(2);
+    const ds = res.tramos.map(t => 'M' + f(t.bez[0][0]) + ' ' + t.bez.map(g => 'C' + f(g[1]) + ' ' + f(g[2]) + ' ' + f(g[3])).join(' ') + (t.cerrado ? ' Z' : ''));
+    const L = ['<?xml version="1.0" encoding="UTF-8"?>',
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${ancho.toFixed(2)}mm" height="${alto.toFixed(2)}mm" viewBox="0 0 ${ancho.toFixed(2)} ${alto.toFixed(2)}">`,
+      `<g id="tubo-${esp}mm" fill="none" stroke="#00b8d4" stroke-opacity="0.35" stroke-width="${esp}" stroke-linecap="round" stroke-linejoin="round">`];
+    ds.forEach(d => L.push(`<path d="${d}"/>`));
+    L.push('</g>', '<g id="eje" fill="none" stroke="#006a7a" stroke-width="0.25" stroke-linecap="round" stroke-linejoin="round">');
+    ds.forEach(d => L.push(`<path d="${d}"/>`));
+    L.push('</g>', '</svg>');
+    return L.join('\n');
+  }
+
+  // Dibuja el recorrido en un canvas: f(x,y) pasa de píxeles de la imagen a píxeles del canvas.
+  function rutaCanvas(g, t, f) {
+    g.beginPath(); let p = f(t.bez[0][0]); g.moveTo(p[0], p[1]);
+    for (const b of t.bez) { const a = f(b[1]), c = f(b[2]), d = f(b[3]); g.bezierCurveTo(a[0], a[1], c[0], c[1], d[0], d[1]); }
+    if (t.cerrado) g.closePath();
+  }
+
+  return { analizar, construirSVG, rutaCanvas };
+})();
+if (typeof module !== 'undefined') module.exports = NeonCore;
+
+</script>
+<script>
+(function(){
+  /* ============ CONFIGURACIÓN DEL NEGOCIO ============
+     Se cambia desde el panel: abrí la página y agregá #admin al final de la dirección.
+     Costos en pesos. El cliente no ve estos números en pantalla.
+     Calibrado para que ~50 cm rinda cerca de $65.000, ~70 cm cerca de $75.000 y ~100 cm cerca de $110.000
+     en un nombre de 6 a 8 letras. Ajustá "divisorMargen" o "manoObraBase" hasta que coincida con tus precios. */
+  const PRISTINE = document.documentElement.outerHTML;   // copia de la página tal cual llegó (para "Descargar mi página")
+  /*CFG-INICIO*/const CONFIG_BASE = {
+    WHATSAPP: '',
+    CLAVE: 'ledon',
+    precioNeonM: 3100, extraNeon: 0.1,
+    gramosPorMetro: 125, precioFilamentoG: 20,
+    horasPorMetro: 3, costoHoraMaquina: 260,
+    fuentes: [ {hastaM: 3, costo: 6500}, {hastaM: 7, costo: 9500}, {hastaM: 14, costo: 16500} ],
+    cableMetros: 2, precioCableM: 850, insumosFijos: 2500,
+    manoObraBase: 4000, manoObraPorMetro: 2000,
+    divisorMargen: 0.5,
+    precioMinimo: 45000, redondeo: 500, senia: 0.5,
+    plazo: '5 a 7 días hábiles',
+    anchoMin: 30, anchoMax: 150, anchoInicial: 65,
+    espesorMm: 6, minLargoCm: 2.5, radioMinCm: 1.5
+  };/*CFG-FIN*/
+  const SIG = JSON.stringify(CONFIG_BASE);
+  let CONFIG = JSON.parse(SIG);
+  try { const g = JSON.parse(localStorage.getItem('ledon.cfg') || 'null'); if (g && g.sig === SIG) CONFIG = Object.assign(CONFIG, g.cfg); } catch (_) {}
+  const FUENTES = ['Sacramento','Yellowtail','Pacifico','Satisfy','Kaushan Script','Dancing Script','Lobster','Courgette','Caveat','Bebas Neue','Righteous','Quicksand'];
+  const COLORES = [['Blanco cálido','#ffe9c7'],['Rosa','#ff3d9a'],['Rojo','#ff2a3a'],['Naranja','#ff8a1f'],['Amarillo','#ffe135'],['Verde','#31ff7a'],['Celeste','#37d7ff'],['Azul','#3a6bff'],['Violeta','#b05cff']];
+
+  const $ = id => document.getElementById(id);
+  const money = n => '$ ' + new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n);
+  const nf1 = new Intl.NumberFormat('es-AR',{minimumFractionDigits:1,maximumFractionDigits:1});
+  const nf2 = new Intl.NumberFormat('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const LADO = 1100;
+  let estado = {tab:'texto', fuente:'Sacramento', color:1, imagen:null, res:null, precio:0, ancho:CONFIG.anchoInicial};
+  let timer = 0, seq = 0;
+
+  function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),1800);}
+
+  /* ---------- precio ---------- */
+  function calcularCosto(m){
+    const C = CONFIG, mExtra = m*(1+C.extraNeon);
+    let fuente = 0, resto = m;
+    const mayor = C.fuentes[C.fuentes.length-1];
+    if (m > mayor.hastaM) { fuente = Math.ceil(m/mayor.hastaM)*mayor.costo; }
+    else fuente = (C.fuentes.find(f => m <= f.hastaM) || mayor).costo;
+    return mExtra*C.precioNeonM + m*C.gramosPorMetro*C.precioFilamentoG + m*C.horasPorMetro*C.costoHoraMaquina
+      + fuente + C.cableMetros*C.precioCableM + C.insumosFijos + C.manoObraBase + m*C.manoObraPorMetro;
+  }
+  function calcularPrecio(m){
+    const C = CONFIG, bruto = Math.max(C.precioMinimo, calcularCosto(m) / C.divisorMargen);
+    return Math.round(bruto / C.redondeo) * C.redondeo;
+  }
+
+  /* ---------- imagen del texto ---------- */
+  function dibujarTexto(texto, fuente){
+    const lineas = texto.split('\n').map(s => s.trim()).filter(Boolean).slice(0,3);
+    if (!lineas.length) return null;
+    const c = document.createElement('canvas'), g = c.getContext('2d', {willReadFrequently:true});
+    let size = 220; const fam = `"${fuente}", cursive, sans-serif`;
+    g.font = `${size}px ${fam}`;
+    const w0 = Math.max(...lineas.map(l => g.measureText(l).width));
+    if (w0 > LADO - 120) size = Math.floor(size * (LADO - 120) / w0);
+    g.font = `${size}px ${fam}`;
+    const ancho = Math.ceil(Math.max(...lineas.map(l => g.measureText(l).width))) + 100, lh = Math.round(size*1.25);
+    c.width = ancho; c.height = lh*lineas.length + 100;
+    g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.fillStyle='#000';
+    g.font = `${size}px ${fam}`; g.textAlign='center'; g.textBaseline='middle';
+    lineas.forEach((l,i)=>g.fillText(l, c.width/2, 50 + lh*i + lh/2));
+    return c;
+  }
+
+  function aGris(canvas, maxLado){
+    const f = Math.min(1, maxLado/Math.max(canvas.width, canvas.height));
+    const w = Math.max(1,Math.round(canvas.width*f)), h = Math.max(1,Math.round(canvas.height*f));
+    const c = document.createElement('canvas'); c.width=w; c.height=h;
+    const g = c.getContext('2d',{willReadFrequently:true}); g.fillStyle='#fff'; g.fillRect(0,0,w,h); g.drawImage(canvas,0,0,w,h);
+    const d = g.getImageData(0,0,w,h).data, gris = new Uint8Array(w*h), alfa = new Uint8Array(w*h).fill(255);
+    for(let i=0;i<w*h;i++) gris[i]=Math.round(0.299*d[i*4]+0.587*d[i*4+1]+0.114*d[i*4+2]);
+    return {gris, alfa, w, h};
+  }
+
+  /* ---------- medir y mostrar ---------- */
+  async function medir(){
+    const mi = ++seq;
+    let fuenteImg;
+    if (estado.tab === 'texto') {
+      const t = $('texto').value;
+      if (!t.trim()) { estado.res = null; return mostrar(); }
+      try { await document.fonts.load(`80px "${estado.fuente}"`, t); } catch(_){}
+      if (mi !== seq) return;
+      fuenteImg = dibujarTexto(t, estado.fuente);
+    } else {
+      fuenteImg = estado.imagen;
+      if (!fuenteImg) { estado.res = null; return mostrar(); }
+    }
+    const im = aGris(fuenteImg, LADO);
+    let res;
+    try { res = NeonCore.analizar(im.gris, im.alfa, im.w, im.h, {anchoCm: estado.ancho, modo: estado.tab==='texto' ? 'linea' : $('modo').value, poda:1, ruido:20, espesorMm: CONFIG.espesorMm, minLargoMm: CONFIG.minLargoCm*10, radioMinMm: 0}); }
+    catch(e){ console.error(e); res = {error:'fallo'}; }
+    if (mi !== seq) return;
+    estado.res = res; mostrar();
+  }
+  const medirDeb = () => { clearTimeout(timer); timer = setTimeout(medir, 250); };
+
+  function mostrar(){
+    const r = estado.res, av = $('aviso'); av.hidden = true;
+    const vacio = !r || r.error;
+    $('vacio').hidden = !vacio; $('vista').style.display = vacio ? 'none' : 'block';
+    $('bCopiar').disabled = vacio; $('barCopiar').disabled = vacio; $('bWsp').hidden = true; $('barWsp').hidden = true;
+    if (vacio) {
+      ['precio','senia','fTam','fNeon','fPlazo','barPrecio'].forEach(i => $(i).textContent='—'); $('precioSub').innerHTML='&nbsp;';
+      if (r && r.error==='vacio') { av.hidden=false; av.textContent='No encontré el dibujo en la imagen. Probá con otra de fondo liso.'; }
+      else if (r) { av.hidden=false; av.textContent='No pude procesar la imagen. Probá con otra.'; }
+      $('vacio').textContent = estado.tab==='texto' ? 'Escribí un texto para ver tu cartel.' : 'Subí tu dibujo para ver tu cartel.';
+      return;
+    }
+    const s = r.mmPx, metros = r.largoPx*s/1000, wc = r.bbox.w*s/10, hc = r.bbox.h*s/10;
+    estado.metros = metros; estado.dim = [wc,hc];
+    estado.precio = calcularPrecio(metros);
+    $('barPrecio').textContent = money(estado.precio); $('precio').textContent = money(estado.precio); $('precioSub').textContent = 'Se confirma con el diseño final';
+    $('senia').textContent = money(Math.round(estado.precio*CONFIG.senia/CONFIG.redondeo)*CONFIG.redondeo);
+    $('fTam').textContent = Math.round(wc) + ' × ' + Math.round(hc) + ' cm';
+    $('fNeon').textContent = nf1.format(metros) + ' m'; $('fPlazo').textContent = CONFIG.plazo;
+    if (r.piezas > 12) { av.hidden=false; av.textContent='Tu dibujo salió muy detallado o con manchas. Probá con una imagen más limpia para un precio más exacto.'; }
+    dibujarNeon(); armarPedido();
+  }
+
+  function dibujarNeon(){
+    const r = estado.res, c = $('vista'), g = c.getContext('2d'), b = r.bbox;
+    const m = Math.round(Math.max(b.w,b.h)*0.05), W = b.w+2*m, H = b.h+2*m;
+    const maxW = Math.min(760, $('pared').clientWidth - 44 || 760), esc = maxW / W;
+    c.width = Math.round(W*esc*2); c.height = Math.round(H*esc*2); c.style.width = Math.round(W*esc)+'px'; c.style.height = Math.round(H*esc)+'px';
+    const k = c.width / W, on = $('encendido').checked, col = COLORES[estado.color][1];
+    g.clearRect(0,0,c.width,c.height); g.lineJoin='round'; g.lineCap='round';
+    const idf = p => [(p[0]-b.x+m)*k, (p[1]-b.y+m)*k];
+    const trazo = () => { for (const t of r.tramos){ NeonCore.rutaCanvas(g, t, idf); g.stroke(); } };
+    const grosor = Math.max(3.5, (r.espesorPx || 0) * k);   // espesor real del neón a escala
+    if (on) {
+      g.strokeStyle = col; g.shadowColor = col; g.shadowBlur = grosor*5; g.lineWidth = grosor*1.6; g.globalAlpha=.55; trazo();
+      g.shadowBlur = grosor*2; g.globalAlpha=1; g.lineWidth = grosor; trazo();
+      g.shadowBlur = 0; g.strokeStyle = '#fffaf0'; g.globalAlpha=.9; g.lineWidth = grosor*.4; trazo(); g.globalAlpha=1;
+    } else {
+      g.strokeStyle = '#6b6573'; g.lineWidth = grosor; trazo();
+      g.strokeStyle = '#8d8798'; g.lineWidth = grosor*.35; trazo();
+    }
+  }
+
+  function textoPedido(){
+    const t = estado.tab==='texto' ? '"' + $('texto').value.trim().split('\n').join(' / ') + '"' : 'Mi dibujo o logo (te lo mando por acá)';
+    return `Hola! Quiero pedir un cartel de neón.\n` +
+      `Texto: ${t}\n` + (estado.tab==='texto' ? `Letra: ${estado.fuente}\n` : '') +
+      `Color: ${COLORES[estado.color][0]}\nTamaño: ${Math.round(estado.dim[0])} × ${Math.round(estado.dim[1])} cm\n` +
+      `Precio estimado: ${money(estado.precio)}\nEntrega: ${CONFIG.plazo}` +
+      ($('comentario').value.trim() ? `\nComentario: ${$('comentario').value.trim()}` : '') +
+      ($('nombre').value.trim() ? `\nMi nombre: ${$('nombre').value.trim()}` : '');
+  }
+  function armarPedido(){
+    const txt = textoPedido(); $('pedidoTxt').value = txt;
+    const a=$('bWsp');
+    if (CONFIG.WHATSAPP) { a.hidden=false; a.href='https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent(txt); $('bCopiar').classList.remove('primary'); $('notaCopiar').hidden=true; }
+    else { a.hidden=true; $('bCopiar').classList.add('primary'); $('notaCopiar').hidden=false; }
+    const bw=$('barWsp'); bw.hidden=!CONFIG.WHATSAPP; bw.href=a.href; $('barCopiar').hidden=!!CONFIG.WHATSAPP;
+  }
+
+  /* ---------- controles ---------- */
+  function armarFuentes(){
+    const cont = $('fonts'); cont.innerHTML = '';
+    const muestra = ($('texto').value.split('\n')[0] || 'Tu texto').slice(0,14);
+    FUENTES.forEach(f => {
+      const b = document.createElement('button'); b.type='button'; b.className='font'; b.setAttribute('aria-pressed', f===estado.fuente);
+      b.innerHTML = '<span class="t"></span><span class="n"></span>'; b.firstChild.textContent = muestra; b.firstChild.style.fontFamily = `"${f}", cursive`; b.lastChild.textContent = f;
+      b.onclick = () => { estado.fuente = f; armarFuentes(); medir(); };
+      cont.appendChild(b);
+    });
+  }
+  function armarColores(){
+    const cont = $('colors'); cont.innerHTML='';
+    COLORES.forEach(([n,h],i) => { const b=document.createElement('button'); b.type='button'; b.className='sw'; b.style.background=h; b.title=n; b.setAttribute('aria-label',n); b.setAttribute('aria-pressed',i===estado.color);
+      b.onclick=()=>{estado.color=i;armarColores();if(estado.res&&!estado.res.error)dibujarNeon();armarPedidoSeguro();}; cont.appendChild(b); });
+    $('colorNombre').textContent = COLORES[estado.color][0];
+  }
+  const armarPedidoSeguro = () => { if (estado.res && !estado.res.error) armarPedido(); };
+
+  function setTab(t){
+    estado.tab = t;
+    $('tabTexto').setAttribute('aria-selected', t==='texto'); $('tabDibujo').setAttribute('aria-selected', t==='dibujo');
+    $('panTexto').hidden = t!=='texto'; $('panDibujo').hidden = t!=='dibujo'; $('cardFuente').hidden = t!=='texto';
+    $('nColor').textContent = t==='texto' ? '3' : '2'; $('nTam').textContent = t==='texto' ? '4' : '3'; $('nDatos').textContent = t==='texto' ? '5' : '4';
+    medir();
+  }
+  function cargarArchivo(file){
+    if (!file || !/^image\//.test(file.type)) { toast('Ese archivo no es una imagen'); return; }
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { estado.imagen = im; $('nombreArchivo').textContent = file.name || 'Imagen pegada';
+      const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(im,0,0);
+      estado.imagen = c; URL.revokeObjectURL(url); medir(); };
+    im.onerror = () => { toast('No pude abrir esa imagen'); URL.revokeObjectURL(url); };
+    im.src = url;
+  }
+
+  $('tabTexto').onclick = () => setTab('texto'); $('tabDibujo').onclick = () => setTab('dibujo');
+  $('texto').addEventListener('input', () => { armarFuentes(); medirDeb(); });
+  $('modo').addEventListener('change', medir);
+  $('archivo').addEventListener('change', e => cargarArchivo(e.target.files[0]));
+  const drop = $('drop');
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+  drop.addEventListener('drop', e => cargarArchivo(e.dataTransfer.files[0]));
+  const ar = $('anchoR'), an = $('ancho');
+  [ar,an].forEach(el => { el.min = CONFIG.anchoMin; el.max = CONFIG.anchoMax; el.step = 1; el.value = estado.ancho; });
+  const setAncho = v => { v = Math.min(CONFIG.anchoMax, Math.max(CONFIG.anchoMin, parseFloat(v)||CONFIG.anchoMin)); estado.ancho=v; ar.value=v; an.value=v; medirDeb(); };
+  ar.addEventListener('input', () => setAncho(ar.value));
+  an.addEventListener('change', () => setAncho(an.value));
+  $('encendido').addEventListener('change', () => { if (estado.res && !estado.res.error) dibujarNeon(); });
+  const copiarPedido = async () => {
+    const t = textoPedido();
+    try { await navigator.clipboard.writeText(t); toast('Pedido copiado'); }
+    catch(_) { const a=$('pedidoTxt'); a.hidden=false; a.value=t; a.focus(); a.select(); toast('Seleccioné el texto: copialo'); }
+  };
+  $('bCopiar').onclick = copiarPedido; $('barCopiar').onclick = copiarPedido;
+  ['nombre','comentario'].forEach(id => $(id).addEventListener('input', armarPedidoSeguro));
+
+
+  /* ---------- panel del dueño (#admin) ---------- */
+  const CAMPOS = [
+    ['WHATSAPP','Tu WhatsApp (código de país, solo números)','t'],['precioNeonM','Precio del metro de neón ($)'],['extraNeon','Desperdicio de neón (%)','p'],
+    ['gramosPorMetro','Filamento por metro de neón (g)'],['precioFilamentoG','Precio del filamento ($ por g)'],['horasPorMetro','Horas de impresión por metro'],
+    ['costoHoraMaquina','Costo por hora de máquina ($)'],['cableMetros','Metros de cable por cartel'],['precioCableM','Precio del cable ($ por m)'],
+    ['insumosFijos','Otros insumos fijos ($)'],['manoObraBase','Mano de obra base ($)'],['manoObraPorMetro','Mano de obra por metro ($)'],
+    ['divisorMargen','Divisor de margen (0,5 = el doble del costo)'],['precioMinimo','Precio mínimo ($)'],['redondeo','Redondear el precio a ($)'],
+    ['senia','Seña (%)','p'],['plazo','Plazo de entrega (texto)','t'],['anchoMin','Ancho mínimo (cm)'],['anchoMax','Ancho máximo (cm)'],['anchoInicial','Ancho inicial (cm)'],['espesorMm','Espesor del neón (mm)'],['minLargoCm','Largo mínimo de cada pieza de neón (cm)'],['radioMinCm','Radio mínimo de curva (cm)'],['CLAVE','Clave de este panel','t']
+  ];
+  const campo = (id, label, val, tipo) => { const d=document.createElement('div'); d.innerHTML='<label class="hint" style="display:block;margin-bottom:4px"></label><input>'; d.firstChild.textContent=label; d.firstChild.htmlFor=id;
+    const i=d.lastChild; i.id=id; i.type = tipo==='t' ? 'text' : 'text'; i.inputMode = tipo==='t' ? 'text' : 'decimal'; i.value=val; i.style.cssText='width:100%;font:inherit;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:9px 11px'; return d; };
+  const aTxt = n => String(n).replace('.',',');
+  const aNum = s => parseFloat(String(s).replace(',','.'));
+  function armarForm(){
+    const c=$('cfgCampos'); c.innerHTML='';
+    CAMPOS.forEach(([k,l,tp]) => c.appendChild(campo('cfg_'+k, l, tp==='t' ? CONFIG[k] : aTxt(tp==='p' ? Math.round(CONFIG[k]*1000)/10 : CONFIG[k]), tp)));
+    const f=$('cfgFuentes'); f.innerHTML='';
+    CONFIG.fuentes.forEach((x,i) => { f.appendChild(campo('cfg_fh'+i, 'Fuente '+(i+1)+': hasta cuántos metros de neón', aTxt(x.hastaM))); f.appendChild(campo('cfg_fc'+i, 'Fuente '+(i+1)+': costo ($)', aTxt(x.costo))); });
+    prueba();
+  }
+  function leerForm(){
+    const n = {}, malos = [];
+    CAMPOS.forEach(([k,l,tp]) => { const v=$('cfg_'+k).value.trim();
+      if (tp==='t') { n[k] = k==='WHATSAPP' ? v.replace(/\D/g,'') : v; return; }
+      let x = aNum(v); if (!isFinite(x) || x < 0) { malos.push(l); x = CONFIG[k]; } else if (tp==='p') x = x/100; n[k]=x; });
+    n.fuentes = CONFIG.fuentes.map((_,i) => { const h=aNum($('cfg_fh'+i).value), c=aNum($('cfg_fc'+i).value); if(!isFinite(h)||!isFinite(c)||h<=0||c<0) malos.push('Fuente '+(i+1)); return {hastaM: isFinite(h)&&h>0?h:CONFIG.fuentes[i].hastaM, costo: isFinite(c)&&c>=0?c:CONFIG.fuentes[i].costo}; });
+    if (!(n.divisorMargen > 0 && n.divisorMargen <= 1)) { malos.push('Divisor de margen (entre 0,1 y 1)'); n.divisorMargen = CONFIG.divisorMargen; }
+    if (!(n.redondeo > 0)) { n.redondeo = CONFIG.redondeo; }
+    if (n.anchoMin >= n.anchoMax) { malos.push('Ancho mínimo y máximo'); n.anchoMin = CONFIG.anchoMin; n.anchoMax = CONFIG.anchoMax; }
+    n.anchoInicial = Math.min(n.anchoMax, Math.max(n.anchoMin, n.anchoInicial));
+    if (!n.CLAVE) n.CLAVE = CONFIG.CLAVE;
+    return {cfg:n, malos};
+  }
+  function msgCfg(t){ $('cfgMsg').textContent = t; }
+  function prueba(){
+    const el = $('cfgPrueba');
+    if (!estado.res || estado.res.error) { el.textContent = 'Escribí un texto arriba (o subí un dibujo) para ver precios de prueba.'; return; }
+    const porCm = estado.metros / estado.ancho;
+    el.textContent = [50,70,100].map(w => w+' cm: '+money(calcularPrecio(porCm*w))).join('   ·   ') + '   (con tu texto actual)';
+  }
+  function aplicar(){
+    [ar,an].forEach(el => { el.min = CONFIG.anchoMin; el.max = CONFIG.anchoMax; });
+    if (estado.ancho > CONFIG.anchoMax || estado.ancho < CONFIG.anchoMin) { estado.ancho = CONFIG.anchoInicial; ar.value = an.value = estado.ancho; medir(); return; }
+    if (estado.res && !estado.res.error) mostrar(); prueba();
+  }
+  function hornear(cfg){
+    const m1 = '/*CFG-' + 'INICIO*/', m2 = '/*CFG-' + 'FIN*/', i = PRISTINE.indexOf(m1), j = PRISTINE.indexOf(m2, i);
+    const html = '<!DOCTYPE html>\n' + PRISTINE.slice(0,i) + m1 + 'const CONFIG_BASE = ' + JSON.stringify(cfg,null,2) + ';' + PRISTINE.slice(j);
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([html],{type:'text/html'})); a.download = 'ledon-cotizador-clientes.html';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  function mostrarPanel(){
+    const quiere = location.hash === '#admin';
+    $('panelAdmin').hidden = !quiere;
+    if (quiere) $('panelAdmin').scrollIntoView({block:'start'});
+  }
+  $('claveBtn').onclick = () => {
+    if ($('claveIn').value === CONFIG.CLAVE) { $('adminClave').hidden = true; $('adminForm').hidden = false; armarForm(); }
+    else $('claveMsg').textContent = 'Clave incorrecta.';
+  };
+  $('claveIn').addEventListener('keydown', e => { if (e.key==='Enter') $('claveBtn').click(); });
+  $('bGuardarCfg').onclick = () => {
+    const {cfg, malos} = leerForm();
+    CONFIG = Object.assign(CONFIG, cfg);
+    try { localStorage.setItem('ledon.cfg', JSON.stringify({sig:SIG, cfg:CONFIG})); } catch(_) {}
+    armarForm(); aplicar();
+    msgCfg(malos.length ? 'Guardé lo demás. Revisá estos campos: ' + malos.join(', ') + '.' : 'Guardado en este navegador. Mirá arriba cómo queda. Para que lo vean tus clientes, descargá la página actualizada.');
+  };
+  $('bBajar').onclick = () => { const {cfg, malos} = leerForm(); if (malos.length) { msgCfg('Revisá estos campos antes de descargar: ' + malos.join(', ') + '.'); return; }
+    try { hornear(Object.assign({}, CONFIG, cfg)); msgCfg('Listo. Subí ese archivo en lugar del anterior para que tus clientes vean los precios nuevos.'); } catch(e) { msgCfg('No pude armar el archivo.'); } };
+  $('bReset').onclick = () => { CONFIG = JSON.parse(SIG); try { localStorage.removeItem('ledon.cfg'); } catch(_) {} armarForm(); aplicar(); msgCfg('Volvieron los valores de la página original.'); };
+  $('bAjustar').onclick = () => {
+    const obj = aNum($('objetivo').value);
+    if (!estado.res || estado.res.error || !(obj > 0)) { msgCfg('Escribí un texto y el precio que querés para ese cartel.'); return; }
+    const d = Math.round(calcularCosto(estado.metros) / obj * 1000) / 1000;
+    if (!(d > 0 && d <= 1)) { msgCfg('Con ese precio el divisor da ' + aTxt(d) + ', que no es válido: el precio tiene que superar el costo.'); return; }
+    $('cfg_divisorMargen').value = aTxt(d); $('bGuardarCfg').click(); msgCfg('Margen ajustado: divisor ' + aTxt(d) + '. Ahora este cartel cuesta cerca de ' + money(obj) + '.');
+  };
+  window.addEventListener('hashchange', mostrarPanel); mostrarPanel();
+
+  armarFuentes(); armarColores();
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(medir);
+  window.addEventListener('resize', () => { if (estado.res && !estado.res.error) dibujarNeon(); });
+})();
+</script>
+
+</body>
+</html>
